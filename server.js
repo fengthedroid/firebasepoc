@@ -3,8 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const Firebase = require('firebase');
 const db = new Firebase("https://blinding-inferno-2117.firebaseio.com");
-//const FirebaseTokenGenerator = require("firebase-token-generator");
-//const tokenGenerator = new FirebaseTokenGenerator("AZm3fv824Lw3p58CXJjSDcfzE5cy0jxHst2vrm0p");
+const FirebaseTokenGenerator = require("firebase-token-generator");
+const tokenGenerator = new FirebaseTokenGenerator("AZm3fv824Lw3p58CXJjSDcfzE5cy0jxHst2vrm0p");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,15 +17,21 @@ app.post('/conversations/', (req, res) => {
     createdAt: Date.now()
   });
 
-  req.body.users.forEach((user)=> {
-    return db.child(`users/${user._id}/${req.body.type}`).push(newConversationRef.key());
+  req.body.users.forEach((user) => {
+    return db.child(`users/${user._id}/${req.body.type}/${newConversationRef.key()}`).set({
+      type: req.body.type
+    });
   });
 
   return res.send(newConversationRef.key());
 });
 
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
   res.sendFile(__dirname + '/chat.html');
+});
+
+app.post('/', function(req, res) {
+  res.send(tokenGenerator.createToken({ uid: req.body.uid }));
 });
 
 const server = app.listen(6040, () => {

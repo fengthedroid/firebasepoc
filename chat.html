@@ -29,16 +29,34 @@
     var db = new Firebase('https://blinding-inferno-2117.firebaseio.com');
     $.ajax({
         type: "POST",
-        url: 'http://localhost:6040/conversations',
+        url: 'http://localhost:6040/',
         data: {
-            users: [{
-                _id: 1
-            }, {
-                _id: 2
-            }],
-            type: 'global'
+            uid: 1
         }
+    }).then(function(token) {
+        console.log(token);
+        return db.authWithCustomToken(token, function(err, authData) {
+            if (err) {
+                return console.log("Login Failed!", error);
+            } else {
+                return console.log("Login Succeeded!", authData);
+            }
+        });
+    }).then(function() {
+        return $.ajax({
+            type: "POST",
+            url: 'http://localhost:6040/conversations',
+            data: {
+                users: [{
+                    _id: 1
+                }, {
+                    _id: 2
+                }],
+                type: 'global'
+            }
+        });
     }).then(function(convID) {
+        console.log(convID);
         var messagesRef = db.child('conversations/' + convID);
         $('#convID').text(convID);
         // REGISTER DOM ELEMENTS
