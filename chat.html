@@ -31,7 +31,8 @@
         type: "POST",
         url: 'http://localhost:6040/',
         data: {
-            uid: 1
+            uid: 1,
+            orgIDs: ['23','45']
         }
     }).then(function(token) {
         console.log(token);
