@@ -19,7 +19,7 @@ app.post('/conversations/', (req, res) => {
 
   req.body.users.forEach((user) => {
     return db.child(`users/${user._id}/${req.body.type}/${newConversationRef.key()}`).set({
-      type: req.body.type
+      lastRead: Date.now()
     });
   });
 
@@ -31,7 +31,7 @@ app.get('/', function(req, res) {
 });
 
 app.post('/', function(req, res) {
-  res.send(tokenGenerator.createToken({ uid: req.body.uid }));
+  res.send(tokenGenerator.createToken(req.body));
 });
 
 const server = app.listen(6040, () => {
